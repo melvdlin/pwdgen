@@ -4,7 +4,7 @@ use rand::{thread_rng, CryptoRng, Rng};
 
 #[derive(Parser, Debug)]
 #[command(name = "pwdgen")]
-#[command(about = "A secure password generator.", long_about = None)]
+#[command(about = "A simple secure random password generator.", long_about = None)]
 struct Args {
     /// Length of the password
     #[arg(short, long, default_value_t = 8)]
