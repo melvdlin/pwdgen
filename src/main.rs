@@ -1,17 +1,22 @@
-use clap::{builder::NonEmptyStringValueParser, Parser};
+use clap::builder::NonEmptyStringValueParser;
+use clap::Parser;
 use itertools::Itertools;
-use rand::{thread_rng, CryptoRng, Rng};
+use rand::seq::SliceRandom;
 
 #[derive(Parser, Debug)]
 #[command(name = "pwdgen")]
 #[command(about = "A simple secure random password generator.", long_about = None)]
 struct Args {
-    /// Length of the password
     #[arg(short, long, default_value_t = 8)]
+    /// Length of the password
     len: usize,
 
+    #[arg(
+        short, long, value_name = "CHARS",
+        default_value = PRINTABLE_ASCII,
+        value_parser = NonEmptyStringValueParser::new()
+    )]
     /// The character pool to draw from. Duplicates will not be eliminated.
-    #[arg(short, long, value_name = "CHARS", default_value = PRINTABLE_ASCII, value_parser = NonEmptyStringValueParser::new())]
     pool: String,
 }
 
@@ -22,12 +27,9 @@ fn main() {
 
     let len = args.len;
     let pool = args.pool.chars().collect_vec();
-    let mut rng = thread_rng();
-    let pwd = (0..len).map(|_| pick(&mut rng, &pool)).collect::<String>();
+    let pwd = pool
+        .choose_multiple(&mut rand::thread_rng(), len)
+        .collect::<String>();
 
     println!("{pwd}");
-}
-
-fn pick<T: CryptoRng + Rng>(rng: &mut T, pool: &[char]) -> char {
-    pool[rng.gen_range(0..pool.len())]
 }
