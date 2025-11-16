@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{builder::NonEmptyStringValueParser, Parser};
 use itertools::Itertools;
 use rand::{thread_rng, CryptoRng, Rng};
 
@@ -11,7 +11,7 @@ struct Args {
     len: usize,
 
     /// The character pool to draw from. Duplicates will not be eliminated.
-    #[arg(short, long, value_name = "CHARS", default_value = PRINTABLE_ASCII)]
+    #[arg(short, long, value_name = "CHARS", default_value = PRINTABLE_ASCII, value_parser = NonEmptyStringValueParser::new())]
     pool: String,
 }
 
